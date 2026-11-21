@@ -26,21 +26,21 @@ main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,1fr);gap:12
 @media(max-width:940px){main{grid-template-columns:1fr}.top{grid-template-columns:1fr}.form{justify-self:center}.logo{text-align:center}}
 #stage{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--az);box-shadow:0 0 18px rgba(42,163,255,.3)}
 #casa svg{display:block;width:100%;height:auto}
-#aviso{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:10px;align-items:center;background:rgba(59,42,0,.94);border:2px solid #ffb300;border-radius:10px;padding:7px 12px;font-size:.74rem;line-height:1.3;font-weight:600}
+#aviso{position:static;margin:8px;display:flex;gap:10px;align-items:center;background:rgba(59,42,0,.94);border:2px solid #ffb300;border-radius:10px;padding:7px 12px;font-size:.74rem;line-height:1.3;font-weight:600}
 #aviso .ic{font-size:1.6rem}
 #avx{display:block;color:#ffd54f}
 @keyframes fl{50%{background:rgba(122,16,16,.96)}}
 #aviso.flash{animation:fl .45s 3}
-.lb rect{fill:#0a3a8a;stroke:#5cc0ff;stroke-width:1.5}
-.lb text{fill:#fff;font:700 12px system-ui,sans-serif}
-.lcd{font:700 15px "Courier New",monospace;fill:#1a2410}
-.un{font:700 8px system-ui,sans-serif;fill:#1a2410}
-.w{fill:none;stroke:#3a3f4a;stroke-width:5;stroke-linecap:round}
-.g{fill:none;stroke:#ffcc33;stroke-width:5;stroke-linecap:round;opacity:0;transition:opacity .3s}
+.lb rect{fill:#0a3a8a;stroke:#5cc0ff;stroke-width:2.5}
+.lb text{fill:#fff;font:700 22px system-ui,sans-serif}
+.lcd{font:700 14px "Courier New",monospace;fill:#1a2410}
+.un{font:700 9px system-ui,sans-serif;fill:#1a2410}
+.w{fill:none;stroke:#3a3f4a;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.g{fill:none;stroke:#ffcc33;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .3s}
 .fl{fill:none;stroke:#fff;stroke-width:2;stroke-dasharray:3 12;opacity:0}
 svg.on .g{opacity:.85}
 svg.on .fl{opacity:1;animation:mv var(--dur,1.2s) linear infinite}
-@keyframes mv{to{stroke-dashoffset:-30}}
+@keyframes mv{to{stroke-dashoffset:-24.1}}
 .pn{display:none;background:var(--pn);border:1px solid var(--az);border-radius:14px;padding:14px;box-shadow:0 0 14px rgba(42,163,255,.25)}
 .pn.on{display:block}
 h2{margin:12px 0 8px;font-size:1rem}
@@ -93,19 +93,18 @@ output{font-family:"Courier New",monospace;font-size:1.05rem;box-shadow:inset 0 
 .tb tr:hover td{background:#d3e8fa}
 #stage{box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 24px rgba(42,163,255,.35)}
 .lb{transition:filter .2s}.lb:hover{filter:brightness(1.4) drop-shadow(0 0 6px #5cc0ff)}
-.rojo{font:700 17px "Courier New",monospace;fill:#ff3b30;filter:drop-shadow(0 0 3px #ff3b30)}
+.rojo{font:700 38px "Courier New",monospace;fill:#ff3b30;filter:drop-shadow(0 0 3px #ff3b30)}
 .lcd{filter:drop-shadow(0 0 1px rgba(30,60,10,.6))}
 .w{stroke:#2d323d}
-.fl{stroke:#fff6bf;stroke-width:5;stroke-dasharray:.1 16;filter:url(#bri)}
+.fl{stroke:#fff6bf;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:.1 24;filter:url(#bri)}
 .g{filter:url(#bri);stroke:#ffb300}
-.nube{animation:nube linear infinite}
-@keyframes nube{from{transform:translateX(-200px)}to{transform:translateX(1100px)}}
-.est2{animation:titila 3s ease-in-out infinite}
-@keyframes titila{50%{opacity:.2}}
-#lz1,#lz2{transform-box:fill-box;transform-origin:center}
-svg.on #lz1,svg.on #lz2{animation:parpadeo 2.6s ease-in-out infinite}
+.lz{transform-box:fill-box;transform-origin:center}
+svg.on .lz{animation:parpadeo 2.6s ease-in-out infinite}
+.fan{transform-box:fill-box;transform-origin:center}
+svg.on .fan{animation:giro .9s linear infinite}
+@keyframes giro{to{transform:rotate(360deg)}}
 @keyframes parpadeo{50%{transform:scale(1.06)}}
-#lev{transform-origin:300px 290px;transform:rotate(-38deg);transition:transform .35s cubic-bezier(.3,1.7,.5,1)}
+#lev{transform-origin:460px 1030px;transform:rotate(-38deg);transition:transform .35s cubic-bezier(.3,1.7,.5,1)}
 svg.sw #lev{transform:rotate(0)}
 #sp{opacity:0;transform-box:fill-box;transform-origin:center}
 #sp.go{animation:chispa .55s ease-out}
@@ -307,100 +306,239 @@ svg.sw #lev{transform:rotate(0)}
 
 </script>
 <script>
-/* Casa en corte (SVG) con el circuito de la Ley de Ohm: fuente, interruptor, conductores,
-   amperímetro (serie), resistencia con código de colores (calienta), voltímetro (paralelo) y lámparas. */
+/* Casa 3D en corte (SVG) vista desde arriba, igual a la imagen de referencia:
+   cocina, dormitorio (ventilador), sala, baño, puerta, ventanas y árboles.
+   Debajo, la mesa de laboratorio con el circuito de la Ley de Ohm:
+   fuente, interruptor, conductores, amperímetro (serie), resistencia con código de colores
+   (calienta) y voltímetro (paralelo). Las lámparas de la casa reflejan la potencia disipada. */
 (function (w) {
   "use strict";
 
-  var PS = ["M190,418 H250 V290 H300", "M340,290 H400 V372", "M400,452 H445", "M475,452 V500 H215 V442 H190"];
+  // Conductores del circuito (fuente + -> interruptor -> amperímetro -> resistencia -> fuente -)
+  var PS = [
+    "M360,1030 H460",
+    "M550,1030 H600 V1137 H647",
+    "M707,1137 V1195 H790",
+    "M910,1195 H940 V1228 H400 V1110 H360"
+  ];
   var COL = ["#111", "#7b3f00", "#d32f2f", "#f57c00", "#fbc02d", "#388e3c", "#1976d2", "#7b1fa2", "#757575", "#fff"];
+  var LAMPS = [[483, 270], [918, 250], [475, 545], [1007, 512]]; // cocina, dormitorio, sala, baño
   var cur = { fu: 0, vm: 0, am: 0 }, T = { fu: 0, vm: 0, am: 0 }, run = false, last = null, lastR = 0;
 
   function g(i) { return document.getElementById(i); }
+  function P(pts, fill, extra) {
+    return '<polygon points="' + pts + '" fill="' + fill + '"' + (extra ? " " + extra : "") + "/>";
+  }
   function lb(cx, cy, t, tx, ty) {
-    var a = t.length * 6.8 + 20;
-    return '<g class="lb"><path d="M' + cx + "," + (cy + 13) + " L" + tx + "," + ty + '" stroke="#5cc0ff" stroke-width="1.5"/><circle cx="' + tx + '" cy="' + ty +
-      '" r="3" fill="#5cc0ff"/><rect x="' + (cx - a / 2) + '" y="' + (cy - 13) + '" width="' + a + '" height="26" rx="8"/><text x="' + cx + '" y="' + (cy + 4) + '" text-anchor="middle">' + t + "</text></g>";
+    var a = Math.round(t.length * 12.2 + 34), y1 = ty < cy ? cy - 22 : cy + 22;
+    return '<g class="lb"><path d="M' + cx + "," + y1 + " L" + tx + "," + ty + '" stroke="#5cc0ff" stroke-width="2.5" fill="none"/>' +
+      '<circle cx="' + tx + '" cy="' + ty + '" r="5" fill="#5cc0ff"/>' +
+      '<rect x="' + (cx - a / 2) + '" y="' + (cy - 22) + '" width="' + a + '" height="44" rx="12"/>' +
+      '<text x="' + cx + '" y="' + (cy + 8) + '" text-anchor="middle">' + t + "</text></g>";
   }
-  function ventana(x, y, a, h) {
-    return '<rect x="' + (x - 4) + '" y="' + (y - 4) + '" width="' + (a + 8) + '" height="' + (h + 8) + '" rx="3" fill="#f4f4f4" stroke="#999"/><rect x="' + x + '" y="' + y + '" width="' + a + '" height="' + h +
-      '" fill="url(#vidrio)"/><path d="M' + (x + a / 2) + " " + y + "v" + h + "M" + x + " " + (y + h / 2) + "h" + a + '" stroke="#f4f4f4" stroke-width="3"/><path d="M' + (x + 6) + " " + (y + h - 6) + " L" + (x + a * 0.45) + " " + (y + 6) + " L" + (x + a * 0.6) + " " + (y + 6) + " L" + (x + 18) + " " + (y + h - 6) + 'z" fill="#fff" opacity=".13"/>';
+  function lampara(x, y, i) {
+    return '<circle cx="' + x + '" cy="' + y + '" r="11" fill="#fff"/>' +
+      '<circle id="bl' + i + '" cx="' + x + '" cy="' + y + '" r="8" fill="#ffe36a" opacity="0"/>' +
+      '<path d="M' + (x - 5) + "," + (y - 15) + " L" + (x - 2) + "," + (y - 8) + '" stroke="#111" stroke-width="3" stroke-linecap="round"/>';
   }
-  function medidor(x, id, u) {
-    var c = x + 30;
-    return '<rect x="' + x + '" y="366" width="60" height="88" rx="10" fill="url(#amar)" stroke="#2a2a2a" stroke-width="2.5" filter="url(#sombra)"/>' +
-      '<rect x="' + (x + 6) + '" y="374" width="48" height="26" rx="3" fill="#b9cf9c" stroke="#333"/><rect x="' + (x + 6) + '" y="374" width="48" height="10" rx="3" fill="#fff" opacity=".2"/>' +
-      '<text x="' + (x + 9) + '" y="396" class="un">' + u + '</text><text id="' + id + '" x="' + (x + 52) + '" y="395" text-anchor="end" class="lcd">0.0</text>' +
-      '<circle cx="' + c + '" cy="422" r="13" fill="#222" stroke="#666" stroke-width="2"/><path d="M' + c + " 422 L" + (c + 6) + ' 413" stroke="#fff" stroke-width="2" stroke-linecap="round"/>' +
-      '<circle cx="' + (x + 14) + '" cy="446" r="4" fill="#d32f2f"/><circle cx="' + (x + 46) + '" cy="446" r="4" fill="#111"/>';
+  function halo(x, y, i) {
+    return '<circle id="lz' + i + '" class="lz" cx="' + x + '" cy="' + y + '" r="150" fill="url(#luz)" opacity="0"/>';
+  }
+  function ventilador(x, y) {
+    var b = "", i;
+    for (i = 0; i < 6; i++) {
+      b += '<ellipse cx="0" cy="-27" rx="8" ry="26" fill="#4f5955" transform="rotate(' + (i * 60) + ')"/>';
+    }
+    return '<g transform="translate(' + x + " " + y + ') scale(1 .65)"><g class="fan">' + b + "</g></g>" +
+      '<circle cx="' + x + '" cy="' + y + '" r="10" fill="#fff"/>' +
+      '<circle id="bl2" cx="' + x + '" cy="' + y + '" r="7" fill="#ffe36a" opacity="0"/>' +
+      '<path d="M' + (x) + "," + (y - 15) + " L" + (x + 2) + "," + (y - 8) + '" stroke="#111" stroke-width="3" stroke-linecap="round"/>';
+  }
+  function medidor(x, y, id, u) {
+    return '<g transform="translate(' + x + " " + y + ') scale(1.9)">' +
+      '<rect width="60" height="88" rx="10" fill="url(#amar)" stroke="#2a2a2a" stroke-width="2.5" filter="url(#sombra)"/>' +
+      '<rect x="6" y="8" width="48" height="26" rx="3" fill="#b9cf9c" stroke="#333"/><rect x="6" y="8" width="48" height="10" rx="3" fill="#fff" opacity=".2"/>' +
+      '<text x="9" y="19" class="un">' + u + '</text><text id="' + id + '" x="52" y="31" text-anchor="end" class="lcd">0.0</text>' +
+      '<circle cx="30" cy="56" r="13" fill="#222" stroke="#666" stroke-width="2"/><path d="M30,56 L36,47" stroke="#fff" stroke-width="2" stroke-linecap="round"/>' +
+      '<circle cx="14" cy="80" r="4" fill="#d32f2f"/><circle cx="46" cy="80" r="4" fill="#111"/></g>';
   }
   function cable(cls) { return PS.map(function (d) { return '<path class="' + cls + '" d="' + d + '"/>'; }).join(""); }
 
   function html() {
-    var s = '<svg id="svgCasa" viewBox="0 0 900 560" role="img" aria-label="Casa en corte con el circuito de la Ley de Ohm"><defs>' +
-      '<linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#051c4a"/><stop offset=".55" stop-color="#2a6fc4"/><stop offset="1" stop-color="#9bd6f8"/></linearGradient>' +
-      '<linearGradient id="pasto" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f8a3a"/><stop offset="1" stop-color="#1b4d20"/></linearGradient>' +
-      '<linearGradient id="techo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#46536f"/><stop offset="1" stop-color="#1c2433"/></linearGradient>' +
-      '<linearGradient id="madera" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a5723f"/><stop offset="1" stop-color="#6b4423"/></linearGradient>' +
-      '<linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f9fb"/><stop offset="1" stop-color="#a9b4c0"/></linearGradient>' +
-      '<linearGradient id="amar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset="1" stop-color="#d99a00"/></linearGradient>' +
-      '<linearGradient id="vidrio" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a6fb0"/><stop offset="1" stop-color="#0d2a55"/></linearGradient>' +
-      '<linearGradient id="somb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>' +
-      '<linearGradient id="cono" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8" stop-opacity=".55"/><stop offset="1" stop-color="#fff0a8" stop-opacity="0"/></linearGradient>' +
-      '<radialGradient id="luz"><stop offset="0" stop-color="#fff3b0" stop-opacity=".95"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient>' +
-      '<radialGradient id="calor"><stop offset="0" stop-color="#ff7a18" stop-opacity=".9"/><stop offset="1" stop-color="#ff3b00" stop-opacity="0"/></radialGradient>' +
-      '<pattern id="tejas" width="26" height="13" patternUnits="userSpaceOnUse"><path d="M0 12H26M13 0V12" stroke="#000" stroke-opacity=".3" fill="none"/></pattern>' +
-      '<filter id="sombra" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".4"/></filter>' +
-      '<filter id="bri" filterUnits="userSpaceOnUse" x="0" y="0" width="900" height="560"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
-    // cielo, luna, estrellas, nubes y pasto
-    s += '<rect width="900" height="560" fill="url(#cielo)"/><circle cx="810" cy="72" r="46" fill="#fff7d6" opacity=".18"/><circle cx="810" cy="72" r="22" fill="#fff7d6"/>';
-    [[60, 40], [150, 92], [260, 30], [380, 70], [520, 26], [640, 62], [730, 112], [860, 20], [100, 140]].forEach(function (p, i) {
-      s += '<circle class="est2" style="animation-delay:' + (i * 0.4) + 's" cx="' + p[0] + '" cy="' + p[1] + '" r="1.5" fill="#fff"/>';
-    });
-    s += '<g class="nube" style="animation-duration:80s"><ellipse cx="0" cy="95" rx="60" ry="16" fill="#fff" opacity=".35"/><ellipse cx="38" cy="86" rx="38" ry="14" fill="#fff" opacity=".35"/></g>' +
-      '<g class="nube" style="animation-duration:120s;animation-delay:-50s"><ellipse cx="0" cy="140" rx="70" ry="14" fill="#fff" opacity=".25"/><ellipse cx="-30" cy="132" rx="34" ry="12" fill="#fff" opacity=".25"/></g>';
-    s += '<rect y="518" width="900" height="42" fill="url(#pasto)"/><circle cx="22" cy="470" r="44" fill="#256b2a"/><circle cx="880" cy="475" r="40" fill="#256b2a"/><rect x="16" y="500" width="10" height="22" fill="#4a2f1b"/><rect x="874" y="500" width="10" height="22" fill="#4a2f1b"/>';
-    // techo y chimenea
-    s += '<rect x="680" y="92" width="36" height="70" fill="#3a2f2a"/><polygon points="30,172 450,45 870,172" fill="url(#techo)"/><polygon points="30,172 450,45 870,172" fill="url(#tejas)"/><rect x="60" y="170" width="780" height="8" fill="#141a26"/>';
-    // habitaciones
-    s += '<rect x="60" y="178" width="270" height="160" fill="#f3dcc0"/><rect x="330" y="178" width="230" height="160" fill="#dfeef2"/><rect x="560" y="178" width="280" height="160" fill="#f4e9d8"/>' +
-      '<rect x="60" y="344" width="240" height="176" fill="#e6e0d6"/><rect x="300" y="344" width="300" height="176" fill="#efe6d2"/><rect x="600" y="344" width="240" height="176" fill="#f2ece0"/>' +
-      '<rect x="60" y="178" width="780" height="342" fill="url(#somb)"/>' +
-      '<rect x="60" y="328" width="780" height="8" fill="#b08a5a"/><rect x="60" y="510" width="780" height="10" fill="#9a7b52"/>' +
-      '<rect x="60" y="336" width="780" height="8" fill="#8a7a62"/><g stroke="#8a7a62" stroke-width="4"><path d="M330 178V336M560 178V336M300 344V520M600 344V520M60 178V520M840 178V520"/></g>';
-    // ventanas y cuadro
-    s += ventana(225, 200, 74, 54) + ventana(362, 200, 74, 50) + ventana(640, 372, 62, 46) + '<rect x="100" y="205" width="58" height="42" fill="#7a4a2a"/><rect x="104" y="209" width="50" height="34" fill="#6fa8c8"/><path d="M104 232l16-12 14 8 12-10 8 8v8h-50z" fill="#3f7a4a"/>';
-    // dormitorio, baño y sala
-    s += '<rect x="90" y="290" width="180" height="46" rx="6" fill="#b9c3d6" filter="url(#sombra)"/><rect x="90" y="262" width="14" height="74" rx="3" fill="#6d4c41"/><rect x="108" y="276" width="46" height="16" rx="7" fill="#fff"/><rect x="170" y="292" width="100" height="22" fill="#8fa0bf"/>' +
-      '<rect x="470" y="205" width="74" height="131" fill="rgba(160,220,255,.3)" stroke="#7fd0ff" stroke-width="2"/><circle cx="510" cy="222" r="6" fill="#aab"/><rect x="350" y="300" width="34" height="36" rx="7" fill="#fff" filter="url(#sombra)"/><rect x="354" y="288" width="26" height="14" rx="3" fill="#f0f0f0"/>' +
-      '<rect x="640" y="238" width="140" height="68" rx="3" fill="#14181f" stroke="#000" filter="url(#sombra)"/><path d="M646 244h54l-30 56h-24z" fill="#fff" opacity=".07"/><rect x="600" y="304" width="150" height="32" rx="8" fill="#8e9bb0" filter="url(#sombra)"/><circle cx="590" cy="310" r="18" fill="#3f8f4a"/><circle cx="582" cy="304" r="10" fill="#4fa85a"/><rect x="586" y="316" width="8" height="20" fill="#6d4c41"/>';
-    // planta baja
-    s += '<rect x="215" y="446" width="70" height="72" rx="6" fill="url(#metal)" stroke="#aab" stroke-width="2" filter="url(#sombra)"/><circle cx="250" cy="486" r="22" fill="#7fa6c9" stroke="#678" stroke-width="3"/><circle cx="243" cy="479" r="7" fill="#fff" opacity=".35"/>' +
-      '<rect x="720" y="360" width="76" height="158" rx="5" fill="url(#metal)" filter="url(#sombra)"/><path d="M720 430h76" stroke="#8a95a3" stroke-width="2"/><rect x="726" y="388" width="4" height="30" rx="2" fill="#556"/><rect x="726" y="440" width="4" height="40" rx="2" fill="#556"/>' +
-      '<rect x="620" y="470" width="86" height="48" rx="4" fill="#7a828c" filter="url(#sombra)"/><rect x="630" y="488" width="66" height="26" rx="3" fill="#1d2229"/><circle cx="640" cy="478" r="4" fill="#333"/><circle cx="660" cy="478" r="4" fill="#333"/><circle cx="680" cy="478" r="4" fill="#333"/>' +
-      '<rect x="320" y="456" width="270" height="12" rx="2" fill="url(#madera)" filter="url(#sombra)"/><rect x="335" y="468" width="10" height="50" fill="#6b4423"/><rect x="565" y="468" width="10" height="50" fill="#6b4423"/><rect x="428" y="455" width="64" height="5" rx="1" fill="#f2efe6" stroke="#999" stroke-width=".6"/>';
-    // lámparas, conos y resplandor
-    s += '<polygon id="cn1" points="175,232 205,232 262,334 118,334" fill="url(#cono)" opacity="0"/><polygon id="cn2" points="684,236 716,236 790,334 610,334" fill="url(#cono)" opacity="0"/>' +
-      '<circle id="lz1" cx="190" cy="228" r="72" fill="url(#luz)" opacity="0"/><circle id="lz2" cx="700" cy="228" r="82" fill="url(#luz)" opacity="0"/>' +
-      '<path d="M190 178V212M700 178V212" stroke="#333" stroke-width="3"/><path d="M174 224a16 14 0 0 1 32 0z" fill="#e8c24a" stroke="#a07c10"/><path d="M682 226a18 15 0 0 1 36 0z" fill="#e8c24a" stroke="#a07c10"/>' +
-      '<circle id="bl1" cx="190" cy="228" r="8" fill="#fff3b0" opacity=".4"/><circle id="bl2" cx="700" cy="231" r="9" fill="#fff3b0" opacity=".4"/>';
+    var s = [];
+    s.push('<svg id="svgCasa" viewBox="0 0 1420 1260" role="img" aria-label="Casa vista desde arriba con el circuito de la Ley de Ohm"><defs>');
+    s.push('<linearGradient id="pasto" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="900"><stop offset="0" stop-color="#12251a"/><stop offset=".55" stop-color="#25502a"/><stop offset="1" stop-color="#43822f"/></linearGradient>');
+    s.push('<linearGradient id="muroB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#fff8dc"/></linearGradient>');
+    s.push('<linearGradient id="muroC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf0d6"/><stop offset="1" stop-color="#e4d3a8"/></linearGradient>');
+    s.push('<linearGradient id="caraL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#fffae0"/></linearGradient>');
+    s.push('<linearGradient id="caraR" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffecae"/><stop offset="1" stop-color="#ffffff"/></linearGradient>');
+    s.push('<linearGradient id="sueloK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2c0"/><stop offset="1" stop-color="#fffbe8"/></linearGradient>');
+    s.push('<linearGradient id="sueloS" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffc47a"/><stop offset=".4" stop-color="#ffeaa0"/><stop offset="1" stop-color="#ffffb4"/></linearGradient>');
+    s.push('<linearGradient id="sueloB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#fffdf0"/></linearGradient>');
+    s.push('<linearGradient id="cama" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#a3b5cc"/><stop offset="1" stop-color="#6d7f99"/></linearGradient>');
+    s.push('<linearGradient id="puerta" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffdb8f"/><stop offset="1" stop-color="#fff5d8"/></linearGradient>');
+    s.push('<linearGradient id="vidrio" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a7186"/><stop offset="1" stop-color="#3f4f60"/></linearGradient>');
+    s.push('<linearGradient id="mesa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a6a38"/><stop offset="1" stop-color="#5b3a1c"/></linearGradient>');
+    s.push('<linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f9fb"/><stop offset="1" stop-color="#a9b4c0"/></linearGradient>');
+    s.push('<linearGradient id="amar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset="1" stop-color="#d99a00"/></linearGradient>');
+    s.push('<radialGradient id="luz"><stop offset="0" stop-color="#ffd24a" stop-opacity=".85"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient>');
+    s.push('<radialGradient id="calor"><stop offset="0" stop-color="#ff7a18" stop-opacity=".9"/><stop offset="1" stop-color="#ff3b00" stop-opacity="0"/></radialGradient>');
+    s.push('<clipPath id="clipCasa"><polygon points="278,176 1078,122 1355,638 145,768"/></clipPath>');
+    s.push('<filter id="sombra" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".4"/></filter>');
+    s.push('<filter id="bri" filterUnits="userSpaceOnUse" x="0" y="0" width="1420" height="1260"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>');
+    s.push("</defs>");
+
+    // ---------- pasto ----------
+    s.push('<rect width="1420" height="1260" fill="url(#pasto)"/>');
+
+    // ---------- árboles ----------
+    s.push(P("146,252 172,246 188,284 164,290", "#6b3320"));
+    s.push(P("48,46 212,193 205,222 160,250 122,262 75,252 62,232", "#2e7d32"));
+    s.push(P("48,46 64,236 75,252 122,262", "#43a443"));
+    s.push(P("48,46 122,262 160,250 205,222 212,193", "#2b7a30"));
+    s.push(P("1214,305 1238,296 1250,318 1226,328", "#6b3320"));
+    s.push(P("1346,84 1183,240 1200,272 1295,303 1332,285", "#2a7a2d"));
+    s.push(P("1346,84 1183,240 1200,272 1262,298", "#3f9d3f"));
+    s.push(P("1346,84 1262,298 1295,303 1332,285", "#236528"));
+
+    // ---------- losa ----------
+    s.push(P("232,862 1262,744 1262,756 240,884", "#d8cfb6"));
+
+    // base interior (evita rendijas entre habitaciones)
+    s.push(P("278,176 1078,122 1355,638 145,768", "#fffbe6"));
+
+    // ---------- COCINA (arriba izquierda) ----------
+    s.push(P("280,178 683,152 690,298 395,318", "url(#muroB)"));
+    s.push(P("280,178 395,318 332,390 240,398", "url(#caraL)"));
+    s.push(P("684,154 691,298 713,372 699,372", "#fff4c4"));
+    s.push(P("395,318 690,298 712,374 332,390", "url(#sueloK)"));
+    // refrigerador
+    s.push(P("303,240 367,235 368,262 304,272", "#8c8b88"));
+    s.push(P("303,272 368,262 396,320 392,358 333,390", "#f4f1db"));
+    s.push(P("368,262 396,320 392,358 368,300", "#e2dcc0"));
+    s.push('<circle cx="371" cy="288" r="3.5" fill="#3ee8ff"/>');
+    // mueble con horno
+    s.push(P("462,266 598,254 600,263 464,274", "#e6b898"));
+    s.push(P("462,274 598,263 605,332 473,343", "#cf9476"));
+    s.push(P("508,302 559,300 561,325 510,327", "#ffdf21"));
+
+    // ---------- DORMITORIO (arriba derecha) ----------
+    s.push(P("683,152 1078,122 1045,255 738,288", "url(#muroB)"));
+    s.push(P("1078,122 1198,355 1125,357 1045,255", "url(#caraR)"));
+    s.push(P("683,152 738,288 728,386 715,378", "#fffbe8"));
+    s.push(P("738,288 1045,255 1125,357 728,386", "url(#sueloK)"));
+    // armario
+    s.push(P("722,188 815,185 812,210 722,214", "#4a3320"));
+    s.push(P("722,214 812,210 806,314 722,322", "#f2a65c"));
+    // cama
+    s.push(P("925,293 1030,250 1075,345 948,350", "url(#cama)"));
+    s.push(P("948,350 1075,345 1075,359 945,372", "#5f7188"));
+    s.push(P("925,293 948,350 945,372 922,302", "#566880"));
+    s.push(P("953,248 1012,242 1008,262 955,268", "#efe2bf"));
+
+    // ---------- SALA (abajo izquierda) ----------
+    s.push(P("237,413 712,380 745,510 303,545", "url(#muroC)"));
+    s.push(P("237,413 303,545 270,738 160,752", "url(#caraL)"));
+    s.push(P("303,545 745,510 752,688 270,738", "url(#sueloS)"));
+    // ventana/cuadro en la pared
+    s.push(P("463,449 569,429 582,518 478,526", "#ffffff"));
+    s.push(P("454,440 527,432 527,466 460,468", "#b07a3f"));
+    // TV azul y mueble marrón
+    s.push(P("262,580 285,603 268,715 243,684", "#62b8ff"));
+    s.push(P("285,606 326,605 316,737 268,741", "#6e4a2c"));
+    s.push(P("326,605 337,619 325,735 316,737", "#93603a"));
+    // mesa naranja
+    s.push(P("418,620 480,617 478,702 413,708", "#f59a3d"));
+    s.push(P("413,708 478,702 480,714 414,717", "#4a2a10"));
+    s.push(P("480,617 485,623 482,714 480,714", "#d97c26"));
+    // sofá azul
+    s.push(P("530,567 600,563 612,704 531,713", "#92c5ea"));
+    s.push(P("593,540 612,544 625,700 612,705", "#6ea5d4"));
+    // puerta lateral
+    s.push(P("737,573 747,590 746,656 735,655", "#3b3b3b"));
+
+    // ---------- BAÑO (abajo derecha) ----------
+    s.push(P("728,388 1195,356 1125,500 757,535", "url(#muroC)"));
+    s.push(P("1195,356 1340,632 1182,636 1125,500", "url(#caraL)"));
+    s.push(P("757,535 1125,500 1183,638 760,688", "url(#sueloB)"));
+    s.push('<ellipse cx="1230" cy="628" rx="14" ry="11" fill="#706d69"/><ellipse cx="1228" cy="626" rx="6" ry="4" fill="#8d8a85"/>');
+    s.push(P("1242,634 1284,628 1285,637 1243,641", "#77746f"));
+
+    // ---------- lámparas, ventilador y resplandor ----------
+    s.push(lampara(483, 270, 1));
+    s.push(ventilador(918, 250));
+    s.push(lampara(475, 545, 3));
+    s.push(lampara(1007, 512, 4));
+    s.push('<g clip-path="url(#clipCasa)">' + halo(483, 270, 1) + halo(918, 250, 2) + halo(475, 545, 3) + halo(1007, 512, 4) + "</g>");
+
+    // ---------- bordes superiores de los muros ----------
+    s.push('<g fill="none" stroke="#656361" stroke-width="12" stroke-linejoin="miter">' +
+      '<path d="M145,768 L278,176 L1078,122 L1355,638"/>' +
+      '<path d="M683,150 L760,690"/><path d="M237,400 L1195,356"/></g>');
+    s.push(P("158,748 1340,627 1356,640 146,770", "#6a6866"));
+
+    // ---------- fachada frontal ----------
+    s.push(P("139,767 1356,640 1258,752 235,868", "#5d5b57"));
+    // ventanas
+    s.push(P("603,762 746,745 749,793 608,806", "#bdb8a8"));
+    s.push(P("612,768 741,753 743,786 617,799", "url(#vidrio)"));
+    s.push(P("1034,722 1140,704 1141,727 1036,744", "#bdb8a8"));
+    s.push(P("1042,726 1133,711 1134,725 1044,739", "url(#vidrio)"));
+    // puerta
+    s.push(P("441,780 529,767 556,832 469,839", "url(#puerta)"));
+    s.push(P("471,841 557,833 566,896 473,896", "#e9dfc6"));
+    s.push(P("428,774 442,781 473,896 446,893", "#b8692f"));
+    s.push(P("428,774 433,776 452,893 446,893", "#7d431c"));
+
+    // ---------- MESA DE LABORATORIO ----------
+    s.push('<polygon points="70,912 1350,912 1420,1260 0,1260" fill="url(#mesa)"/><path d="M70,912 H1350" stroke="#c89a5e" stroke-width="6"/>' +
+      '<path d="M30,1060 H1390 M10,1170 H1410" stroke="#000" stroke-opacity=".12" stroke-width="3"/>');
+
     // fuente DC
-    s += '<rect x="80" y="395" width="110" height="72" rx="7" fill="url(#metal)" stroke="#556" stroke-width="2" filter="url(#sombra)"/><rect x="90" y="403" width="62" height="28" rx="3" fill="#1a0000" stroke="#000"/>' +
-      '<text id="fuV" x="148" y="424" text-anchor="end" class="rojo">0.0 V</text><circle id="led" cx="166" cy="410" r="3.5" fill="#22c55e" opacity=".25"/>' +
-      '<circle cx="104" cy="450" r="9" fill="#2b3340"/><path id="knob" d="M104 450L104 443" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="132" cy="450" r="9" fill="#2b3340"/><path d="M132 450L137 445" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>' +
-      '<circle cx="190" cy="418" r="7" fill="#e53935" stroke="#7f1d1d" stroke-width="2"/><circle cx="190" cy="442" r="7" fill="#111" stroke="#000" stroke-width="2"/>';
-    s += "<g>" + cable("w") + cable("g") + cable("fl") + "</g>";
+    s.push('<rect x="110" y="985" width="250" height="165" rx="12" fill="url(#metal)" stroke="#556" stroke-width="3" filter="url(#sombra)"/>' +
+      '<rect x="130" y="1003" width="150" height="56" rx="5" fill="#1a0000" stroke="#000"/>' +
+      '<text id="fuV" x="272" y="1046" text-anchor="end" class="rojo">0.0 V</text>' +
+      '<circle id="led" cx="318" cy="1020" r="8" fill="#22c55e" opacity=".25"/>' +
+      '<circle cx="165" cy="1112" r="20" fill="#2b3340"/><path id="knob" d="M165,1112 L165,1096" stroke="#fff" stroke-width="5" stroke-linecap="round"/>' +
+      '<circle cx="225" cy="1112" r="20" fill="#2b3340"/><path d="M225,1112 L236,1101" stroke="#fff" stroke-width="5" stroke-linecap="round"/>' +
+      '<circle cx="360" cy="1030" r="12" fill="#e53935" stroke="#7f1d1d" stroke-width="3"/><circle cx="360" cy="1110" r="12" fill="#111" stroke="#000" stroke-width="3"/>');
+
     // interruptor
-    s += '<rect x="296" y="276" width="48" height="28" rx="6" fill="#fff" stroke="#889" filter="url(#sombra)"/><circle cx="300" cy="290" r="4" fill="#333"/><circle cx="340" cy="290" r="4" fill="#333"/>' +
-      '<line id="lev" x1="300" y1="290" x2="338" y2="290" stroke="#333" stroke-width="4" stroke-linecap="round"/><circle id="sp" cx="320" cy="290" r="14" fill="#fff3b0"/>';
-    // instrumentos, resistencia y puntas
-    s += medidor(370, "amV", "mA") + medidor(520, "vmV", "V");
-    s += '<circle id="ht" cx="460" cy="452" r="30" fill="url(#calor)" opacity="0"/><rect x="445" y="447" width="30" height="10" rx="5" fill="#e8d3a2" stroke="#8a6d2f"/>' +
-      '<rect id="b1" x="451" y="447" width="3.2" height="10" fill="#f57c00"/><rect id="b2" x="457" y="447" width="3.2" height="10" fill="#f57c00"/><rect id="b3" x="463" y="447" width="3.2" height="10" fill="#7b3f00"/><rect x="469" y="447" width="2.4" height="10" fill="#d4af37"/>';
-    s += '<path d="M535,452 C535,484 480,484 476,458" fill="none" stroke="#d32f2f" stroke-width="2.5" stroke-linecap="round"/><path d="M565,452 C565,492 440,492 444,458" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>';
-    s += lb(135, 372, "Fuente de Tensión DC", 135, 395) + lb(300, 252, "Interruptor", 318, 276) + lb(455, 262, "Conductor", 402, 290) + lb(790, 195, "Receptor (Lámpara)", 718, 226) +
-      lb(550, 345, "Voltímetro (Paralelo)", 550, 366) + lb(390, 342, "Amperímetro (Serie)", 400, 366) + lb(460, 537, "Resistencia", 460, 460);
-    return s + "</svg>";
+    s.push('<rect x="440" y="1000" width="130" height="60" rx="12" fill="#fff" stroke="#889" stroke-width="2" filter="url(#sombra)"/>' +
+      '<circle cx="460" cy="1030" r="8" fill="#333"/><circle cx="550" cy="1030" r="8" fill="#333"/>');
+
+    // instrumentos
+    s.push(medidor(620, 985, "amV", "mA"));
+    s.push(medidor(1000, 985, "vmV", "V"));
+
+    // resistencia
+    s.push('<circle id="ht" cx="850" cy="1195" r="70" fill="url(#calor)" opacity="0"/>' +
+      '<rect x="800" y="1180" width="100" height="30" rx="15" fill="#e8d3a2" stroke="#8a6d2f" stroke-width="3"/>' +
+      '<rect id="b1" x="818" y="1180" width="10" height="30" fill="#f57c00"/><rect id="b2" x="835" y="1180" width="10" height="30" fill="#f57c00"/>' +
+      '<rect id="b3" x="852" y="1180" width="10" height="30" fill="#7b3f00"/><rect x="874" y="1180" width="7" height="30" fill="#d4af37"/>');
+
+    // conductores
+    s.push("<g>" + cable("w") + cable("g") + cable("fl") + "</g>");
+    // puntas del voltímetro (en paralelo con la resistencia)
+    s.push('<path d="M1027,1137 V1168 H790 V1195" fill="none" stroke="#d32f2f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M1087,1137 V1195 H910" fill="none" stroke="#222" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<circle cx="790" cy="1195" r="6" fill="#333"/><circle cx="910" cy="1195" r="6" fill="#333"/>');
+
+    // palanca del interruptor y chispa (encima de los conductores)
+    s.push('<line id="lev" x1="460" y1="1030" x2="548" y2="1030" stroke="#333" stroke-width="9" stroke-linecap="round"/>' +
+      '<circle id="sp" cx="505" cy="1030" r="28" fill="#fff3b0"/>');
+
+    // etiquetas
+    s.push(lb(420, 100, "Receptor (Lámpara)", 483, 262));
+    s.push(lb(235, 950, "Fuente de Tensión DC", 235, 985));
+    s.push(lb(677, 950, "Amperímetro (Serie)", 677, 985));
+    s.push(lb(1057, 950, "Voltímetro (Paralelo)", 1057, 985));
+    s.push(lb(510, 1100, "Interruptor", 505, 1062));
+    s.push(lb(850, 1110, "Resistencia", 850, 1180));
+    s.push(lb(510, 1175, "Conductor", 520, 1228));
+
+    s.push("</svg>");
+    return s.join("");
   }
 
   function tick() {
@@ -426,16 +564,14 @@ svg.sw #lev{transform:rotate(0)}
       var activo = s.on && s.U > 0;
       T.fu = s.U; T.vm = s.Um; T.am = s.I * 1000;
       if (!run) { run = true; requestAnimationFrame(tick); }
-      var op = activo ? 0.15 + 0.85 * Math.min(1, Math.sqrt(s.P)) : 0;
-      g("lz1").setAttribute("opacity", (op * 0.8).toFixed(2));
-      g("lz2").setAttribute("opacity", op.toFixed(2));
-      g("cn1").setAttribute("opacity", (op * 0.7).toFixed(2));
-      g("cn2").setAttribute("opacity", (op * 0.8).toFixed(2));
-      g("bl1").setAttribute("opacity", (0.4 + 0.6 * op).toFixed(2));
-      g("bl2").setAttribute("opacity", (0.4 + 0.6 * op).toFixed(2));
-      g("ht").setAttribute("opacity", activo ? Math.min(1, s.P / 0.7).toFixed(2) : 0);
+      var op = activo ? 0.2 + 0.8 * Math.min(1, Math.sqrt(s.P)) : 0;
+      [1, 2, 3, 4].forEach(function (i) {
+        g("lz" + i).setAttribute("opacity", op.toFixed(2));
+        g("bl" + i).setAttribute("opacity", activo ? Math.min(1, 0.35 + op).toFixed(2) : "0");
+      });
+      g("ht").setAttribute("opacity", activo ? Math.min(1, s.P / 0.7).toFixed(2) : "0");
       g("led").setAttribute("opacity", s.on ? 1 : 0.25);
-      g("knob").style.transformOrigin = "104px 450px";
+      g("knob").style.transformOrigin = "165px 1112px";
       g("knob").style.transition = "transform .5s ease";
       g("knob").style.transform = "rotate(" + (-135 + (s.U / 12) * 270) + "deg)";
       if (s.R && s.R !== lastR) { lastR = s.R; bandas(s.R); }
