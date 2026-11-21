@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ley de Ohm · Simulador interactivo de circuitos eléctricos · TECSUP</title>
+<style>
+:root{color-scheme:dark;--az:#2aa3ff;--pn:rgba(6,28,66,.92);--tx:#eaf4ff;--mut:#9fc3e6;--ok:#22c55e;--no:#ef4444;--am:#ffcc33}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--tx);background:radial-gradient(circle at 30% 0,#14459a,#06142e 70%) fixed;min-height:100vh;padding:10px 12px 18px}
+.top{display:grid;grid-template-columns:200px 1fr 200px;gap:12px;align-items:center}
+.logo b{display:block;font-size:1.6rem;letter-spacing:.5px}
+.logo span{font-size:.7rem;color:var(--mut);line-height:1.2;display:block}
+.tit,.form{background:var(--pn);border:1px solid var(--az);border-radius:14px;box-shadow:0 0 14px rgba(42,163,255,.3)}
+.tit{text-align:center;padding:6px 10px}
+.tit h1{margin:0;font-size:2rem;letter-spacing:1px}
+.tit p{margin:0;font-size:.9rem;font-weight:600}
+.form{justify-self:end;display:flex;align-items:center;gap:8px;font-size:2rem;font-style:italic;font-weight:700;padding:6px 18px}
+.fr{display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.fr i:first-child{border-bottom:3px solid #fff;padding:0 8px}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+nav button{border:1px solid var(--az);background:var(--pn);color:var(--tx);padding:9px 18px;border-radius:12px 12px 0 0;font-weight:700;cursor:pointer;font-size:.9rem}
+nav button.on{background:var(--az);color:#04122b}
+main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(320px,1fr);gap:12px;align-items:start}
+@media(max-width:940px){main{grid-template-columns:1fr}.top{grid-template-columns:1fr}.form{justify-self:center}.logo{text-align:center}}
+#stage{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--az);box-shadow:0 0 18px rgba(42,163,255,.3)}
+#casa svg{display:block;width:100%;height:auto}
+#aviso{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:10px;align-items:center;background:rgba(59,42,0,.94);border:2px solid #ffb300;border-radius:10px;padding:7px 12px;font-size:.74rem;line-height:1.3;font-weight:600}
+#aviso .ic{font-size:1.6rem}
+#avx{display:block;color:#ffd54f}
+@keyframes fl{50%{background:rgba(122,16,16,.96)}}
+#aviso.flash{animation:fl .45s 3}
+.lb rect{fill:#0a3a8a;stroke:#5cc0ff;stroke-width:1.5}
+.lb text{fill:#fff;font:700 12px system-ui,sans-serif}
+.lcd{font:700 15px "Courier New",monospace;fill:#1a2410}
+.un{font:700 8px system-ui,sans-serif;fill:#1a2410}
+.w{fill:none;stroke:#3a3f4a;stroke-width:5;stroke-linecap:round}
+.g{fill:none;stroke:#ffcc33;stroke-width:5;stroke-linecap:round;opacity:0;transition:opacity .3s}
+.fl{fill:none;stroke:#fff;stroke-width:2;stroke-dasharray:3 12;opacity:0}
+svg.on .g{opacity:.85}
+svg.on .fl{opacity:1;animation:mv var(--dur,1.2s) linear infinite}
+@keyframes mv{to{stroke-dashoffset:-30}}
+.pn{display:none;background:var(--pn);border:1px solid var(--az);border-radius:14px;padding:14px;box-shadow:0 0 14px rgba(42,163,255,.25)}
+.pn.on{display:block}
+h2{margin:12px 0 8px;font-size:1rem}
+h2:first-child{margin-top:0}
+h3{margin:0 0 6px;font-size:.95rem}
+h3 small{color:var(--mut);font-weight:400}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0;font-weight:600;font-size:.9rem}
+output{background:#cfe3f7;color:#0b2a4a;border-radius:6px;padding:5px 0;min-width:96px;text-align:center;font-weight:700}
+select{background:#cfe3f7;color:#0b2a4a;border:0;border-radius:6px;padding:6px 8px;font-weight:700;min-width:96px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+button{font:inherit;cursor:pointer}
+.enc,.apa,.sec{border:0;border-radius:10px;padding:10px 14px;font-weight:800;color:#fff;font-size:.85rem}
+.enc{background:linear-gradient(#1fc65a,#0e8f3f)}
+.apa{background:linear-gradient(#e53935,#a51515)}
+.sec{background:#18407e;border:1px solid var(--az)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.est{text-align:center;padding:10px;border-radius:10px;font-weight:800;border:1px solid}
+.est.ok{background:rgba(34,197,94,.15);border-color:var(--ok);color:#7dffa8}
+.est.no{background:rgba(239,68,68,.15);border-color:var(--no);color:#ff9d9d}
+.mut{color:var(--mut);font-size:.8rem}
+.sc{overflow-x:auto}
+.tb{width:100%;border-collapse:collapse;background:#e6f1fb;color:#10253b;font-size:.8rem;border-radius:8px;overflow:hidden}
+.tb th{background:#bcd7f0;padding:5px 4px}
+.tb td{padding:4px;text-align:center;border-top:1px solid #c9dcef}
+.card{background:rgba(255,255,255,.05);border:1px solid #1d4f95;border-radius:10px;padding:10px;margin-bottom:12px}
+canvas{display:block;width:100%;height:170px;background:#f4f9ff;border-radius:8px;margin-top:8px}
+.rs{background:rgba(255,255,255,.06);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:.86rem}
+.rs ul{margin:6px 0 0;padding-left:18px}
+.rs li{margin:4px 0}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:800;font-size:.78rem;color:#fff}
+.tag.ok{background:var(--ok)}.tag.no{background:var(--no)}
+.fx{background:#f6e27a;color:#10253b;border-radius:8px;padding:6px 12px;font-weight:800;display:inline-block;font-style:italic}
+
+/* ---------- Mejoras visuales y animaciones ---------- */
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 80% 100%,rgba(42,163,255,.14),transparent 55%);pointer-events:none}
+.tit h1{background:linear-gradient(90deg,#fff,#7fd0ff,#fff);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:brillo 6s linear infinite}
+@keyframes brillo{to{background-position:200% center}}
+.tit,.form,.pn,#stage{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+nav button{transition:transform .15s,background .2s,box-shadow .2s}
+nav button:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(42,163,255,.45)}
+nav button.on{box-shadow:0 0 16px rgba(42,163,255,.7)}
+.enc,.apa,.sec{transition:transform .12s,box-shadow .2s,filter .2s}
+.enc:hover:not(:disabled),.apa:hover:not(:disabled),.sec:hover{transform:translateY(-1px);filter:brightness(1.15);box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.enc:active:not(:disabled),.apa:active:not(:disabled),.sec:active{transform:translateY(1px) scale(.97)}
+.pn.on{animation:entra .35s ease-out}
+@keyframes entra{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+output{font-family:"Courier New",monospace;font-size:1.05rem;box-shadow:inset 0 2px 5px rgba(0,0,0,.25)}
+.est.ok::before,.est.no::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;background:currentColor;animation:pulso 1.4s ease-in-out infinite}
+@keyframes pulso{50%{opacity:.25;transform:scale(.7)}}
+.tb tr:hover td{background:#d3e8fa}
+#stage{box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 24px rgba(42,163,255,.35)}
+.lb{transition:filter .2s}.lb:hover{filter:brightness(1.4) drop-shadow(0 0 6px #5cc0ff)}
+.rojo{font:700 17px "Courier New",monospace;fill:#ff3b30;filter:drop-shadow(0 0 3px #ff3b30)}
+.lcd{filter:drop-shadow(0 0 1px rgba(30,60,10,.6))}
+.w{stroke:#2d323d}
+.fl{stroke:#fff6bf;stroke-width:5;stroke-dasharray:.1 16;filter:url(#bri)}
+.g{filter:url(#bri);stroke:#ffb300}
+.nube{animation:nube linear infinite}
+@keyframes nube{from{transform:translateX(-200px)}to{transform:translateX(1100px)}}
+.est2{animation:titila 3s ease-in-out infinite}
+@keyframes titila{50%{opacity:.2}}
+#lz1,#lz2{transform-box:fill-box;transform-origin:center}
+svg.on #lz1,svg.on #lz2{animation:parpadeo 2.6s ease-in-out infinite}
+@keyframes parpadeo{50%{transform:scale(1.06)}}
+#lev{transform-origin:300px 290px;transform:rotate(-38deg);transition:transform .35s cubic-bezier(.3,1.7,.5,1)}
+svg.sw #lev{transform:rotate(0)}
+#sp{opacity:0;transform-box:fill-box;transform-origin:center}
+#sp.go{animation:chispa .55s ease-out}
+@keyframes chispa{0%{opacity:1;transform:scale(.3)}100%{opacity:0;transform:scale(2.4)}}
+#ht{transition:opacity .6s}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo"><b>TECSUP</b><span>CIENCIAS BÁSICAS<br>APLICADAS</span></div>
+  <div class="tit"><h1>LEY DE OHM</h1><p>Simulador Interactivo de Circuitos Eléctricos</p></div>
+  <div class="form" aria-label="Ley de Ohm: I es igual a U entre R"><span>I</span><span>=</span><span class="fr"><i>U</i><i>R</i></span></div>
+</header>
+
+<nav id="tabs">
+  <button class="on" data-t="inicio">🏠 Inicio</button>
+  <button data-t="lab">⚗️ Laboratorio</button>
+  <button data-t="prac">📊 Prácticas</button>
+  <button data-t="res">📋 Resultados</button>
+</nav>
+
+<main>
+  <div id="stage">
+    <div id="casa"></div>
+    <div id="aviso">
+      <span class="ic">⚠️</span>
+      <div>No realizar conexiones con la fuente encendida. Reducir la tensión a cero y apagar la fuente antes de cambiar conexiones. Usar autorización del profesor.
+        <strong id="avx"></strong></div>
+    </div>
+  </div>
+
+  <aside id="panel">
+    <section class="pn on" id="t-inicio">
+      <h2>Magnitudes eléctricas</h2>
+      <div class="row"><span>⚡ Tensión U (V)</span><output id="oU">0.0</output></div>
+      <div class="row"><span>〰 Corriente I (A)</span><output id="oI">0.000</output></div>
+      <div class="row"><span>Ω Resistencia R (Ω)</span><output id="oR">330</output></div>
+      <div class="row"><span>🔥 Potencia P (W)</span><output id="oP">0.000</output></div>
+      <div class="btns">
+        <button id="bOn" class="enc">⏻ ENCENDER</button>
+        <button id="bOff" class="apa">⏻ APAGAR</button>
+      </div>
+      <h2>Selectores</h2>
+      <label class="row" for="sU"><span>Tensión (V)</span><select id="sU"></select></label>
+      <label class="row" for="sR"><span>Resistencia (Ω)</span><select id="sR"></select></label>
+      <h2>Estado del circuito</h2>
+      <div id="estado" class="est no">CIRCUITO ABIERTO</div>
+      <p class="mut">Pasos: 1) elija R con la fuente apagada, 2) elija U, 3) pulse ENCENDER y lea el voltímetro y el amperímetro. La lámpara refleja la potencia disipada.</p>
+    </section>
+
+    <section class="pn" id="t-lab">
+      <h2>Registro de mediciones</h2>
+      <p class="mut">Con la fuente encendida pulse «Registrar medición». Apague la fuente para cambiar R y repita con otras tensiones.</p>
+      <div class="btns">
+        <button id="bReg" class="enc">Registrar medición</button>
+        <button id="bCsv" class="sec">Exportar CSV</button>
+        <button id="bClr" class="sec">Borrar</button>
+      </div>
+      <div class="sc"><table class="tb" id="tLab"></table></div>
+    </section>
+
+    <section class="pn" id="t-prac">
+      <div class="card">
+        <h3>A.1 Corriente vs tensión <small>(R constante)</small></h3>
+        <label class="row" for="rA1"><span>R constante</span><select id="rA1"><option value="330">330 Ω</option><option value="510">510 Ω</option></select></label>
+        <div class="sc"><table class="tb" id="tA1"></table></div>
+        <canvas id="gA1" aria-label="Gráfico I vs U"></canvas>
+      </div>
+      <div class="card">
+        <h3>A.2 Corriente vs resistencia <small>(U constante)</small></h3>
+        <label class="row" for="uA2"><span>U constante</span><select id="uA2"></select></label>
+        <div class="sc"><table class="tb" id="tA2"></table></div>
+        <canvas id="gA2" aria-label="Gráfico I vs R"></canvas>
+      </div>
+    </section>
+
+    <section class="pn" id="t-res">
+      <h2>Resultados</h2>
+      <div id="resBox"></div>
+    </section>
+  </aside>
+</main>
+
+<script>
+/* Física de la Ley de Ohm: I = U / R
+   Los valores "medidos" llevan una desviación determinista (±2 % en corriente, ±1 % en tensión)
+   para simular la tolerancia de la resistencia y la incertidumbre de los instrumentos. */
+(function (w) {
+  "use strict";
+
+  var UV = [0, 2, 4, 6, 8, 10, 12];                       // tensiones del selector (V)
+  var UT = [2, 4, 6, 8, 10, 12];                          // tensiones de la práctica A.1 (V)
+  var RV = [150, 200, 330, 470, 510, 620, 750, 820, 1000]; // resistencias del selector (Ω)
+  var RT = [1000, 820, 750, 620, 510, 330, 200, 150];     // resistencias de la práctica A.2 (Ω)
+
+  function ruido(a, b) {
+    var x = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453;
+    x = x - Math.floor(x);
+    return 1 + (x - 0.5) * 0.04;
+  }
+  function iCalc(u, r) { return u / r; }
+  function iMed(u, r) { return (u / r) * ruido(u, r); }
+  function uMed(u, r) { return u * (1 + (ruido(r, u) - 1) * 0.5); }
+  function pot(u, r) { return (u * u) / r; }
+  function error(vn, vm) { return vn === 0 ? 0 : (Math.abs(vn - vm) / vn) * 100; }
+
+  function fila(u, r) {
+    var ic = iCalc(u, r) * 1000, im = iMed(u, r) * 1000;
+    return { u: u, r: r, ic: ic, im: im, e: error(ic, im) };
+  }
+  function tabla1(r) { return UT.map(function (u) { return fila(u, r); }); }
+  function tabla2(u) { return RT.map(function (r) { return fila(u, r); }); }
+
+  // Ajuste y = k·x por el origen y coeficiente de determinación R²
+  function ajuste(p) {
+    var n = p.length, sxy = 0, sxx = 0, my = 0, i;
+    for (i = 0; i < n; i++) { sxy += p[i][0] * p[i][1]; sxx += p[i][0] * p[i][0]; my += p[i][1]; }
+    my /= n;
+    var k = sxy / sxx, sr = 0, st = 0;
+    for (i = 0; i < n; i++) {
+      var e = p[i][1] - k * p[i][0];
+      sr += e * e;
+      st += Math.pow(p[i][1] - my, 2);
+    }
+    return { k: k, r2: st === 0 ? 1 : 1 - sr / st };
+  }
+
+  w.Ohm = { UV: UV, RV: RV, iCalc: iCalc, iMed: iMed, uMed: uMed, pot: pot, error: error, tabla1: tabla1, tabla2: tabla2, ajuste: ajuste };
+})(window);
+
+</script>
+<script>
+/* Gráficos de líneas en <canvas>, sin librerías externas. */
+(function (w) {
+  "use strict";
+
+  function nice(m) {
+    var e = Math.pow(10, Math.floor(Math.log10(m))), c = [1, 2, 2.5, 5, 10], i;
+    for (i = 0; i < c.length; i++) { if (c[i] * e >= m * 1.02) { return c[i] * e; } }
+    return 10 * e;
+  }
+  function num(v) { return String(+v.toPrecision(3)); }
+
+  function dibujar(cv, pts, o) {
+    var d = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+    if (!W || !H || !pts.length) { return; }
+    cv.width = Math.round(W * d);
+    cv.height = Math.round(H * d);
+    var g = cv.getContext("2d");
+    g.setTransform(d, 0, 0, d, 0, 0);
+    g.clearRect(0, 0, W, H);
+
+    var L = 44, B = 34, T = 10, R = 14, pw = W - L - R, ph = H - T - B;
+    var xm = o.xmax;
+    var ym = nice(Math.max.apply(null, pts.map(function (p) { return p[1]; })) || 1);
+    function X(v) { return L + (v / xm) * pw; }
+    function Y(v) { return T + ph - (v / ym) * ph; }
+
+    g.font = "10px system-ui, sans-serif";
+    g.lineWidth = 1;
+    var i;
+    for (i = 0; i <= 4; i++) {
+      var yv = (ym * i) / 4, yy = Y(yv);
+      g.strokeStyle = "#cfdae6";
+      g.beginPath(); g.moveTo(L, yy); g.lineTo(L + pw, yy); g.stroke();
+      g.fillStyle = "#34495e"; g.textAlign = "right";
+      g.fillText(num(yv), L - 5, yy + 3);
+    }
+    for (i = 0; i <= 5; i++) {
+      var xv = (xm * i) / 5, xx = X(xv);
+      g.strokeStyle = "#e2eaf2";
+      g.beginPath(); g.moveTo(xx, T); g.lineTo(xx, T + ph); g.stroke();
+      g.fillStyle = "#34495e"; g.textAlign = "center";
+      g.fillText(num(xv), xx, T + ph + 13);
+    }
+    g.strokeStyle = "#34495e";
+    g.beginPath(); g.moveTo(L, T); g.lineTo(L, T + ph); g.lineTo(L + pw, T + ph); g.stroke();
+
+    g.fillStyle = "#10253b"; g.textAlign = "center";
+    g.fillText(o.xl, L + pw / 2, H - 5);
+    g.save(); g.translate(11, T + ph / 2); g.rotate(-Math.PI / 2); g.fillText(o.yl, 0, 0); g.restore();
+
+    g.strokeStyle = "#f28c28"; g.lineWidth = 2;
+    g.beginPath();
+    pts.forEach(function (p, k) {
+      if (k) { g.lineTo(X(p[0]), Y(p[1])); } else { g.moveTo(X(p[0]), Y(p[1])); }
+    });
+    g.stroke();
+    g.fillStyle = "#1e6fd9";
+    pts.forEach(function (p) {
+      g.beginPath(); g.arc(X(p[0]), Y(p[1]), 3, 0, Math.PI * 2); g.fill();
+    });
+  }
+
+  w.Graf = { dibujar: dibujar };
+})(window);
+
+</script>
+<script>
+/* Casa en corte (SVG) con el circuito de la Ley de Ohm: fuente, interruptor, conductores,
+   amperímetro (serie), resistencia con código de colores (calienta), voltímetro (paralelo) y lámparas. */
+(function (w) {
+  "use strict";
+
+  var PS = ["M190,418 H250 V290 H300", "M340,290 H400 V372", "M400,452 H445", "M475,452 V500 H215 V442 H190"];
+  var COL = ["#111", "#7b3f00", "#d32f2f", "#f57c00", "#fbc02d", "#388e3c", "#1976d2", "#7b1fa2", "#757575", "#fff"];
+  var cur = { fu: 0, vm: 0, am: 0 }, T = { fu: 0, vm: 0, am: 0 }, run = false, last = null, lastR = 0;
+
+  function g(i) { return document.getElementById(i); }
+  function lb(cx, cy, t, tx, ty) {
+    var a = t.length * 6.8 + 20;
+    return '<g class="lb"><path d="M' + cx + "," + (cy + 13) + " L" + tx + "," + ty + '" stroke="#5cc0ff" stroke-width="1.5"/><circle cx="' + tx + '" cy="' + ty +
+      '" r="3" fill="#5cc0ff"/><rect x="' + (cx - a / 2) + '" y="' + (cy - 13) + '" width="' + a + '" height="26" rx="8"/><text x="' + cx + '" y="' + (cy + 4) + '" text-anchor="middle">' + t + "</text></g>";
+  }
+  function ventana(x, y, a, h) {
+    return '<rect x="' + (x - 4) + '" y="' + (y - 4) + '" width="' + (a + 8) + '" height="' + (h + 8) + '" rx="3" fill="#f4f4f4" stroke="#999"/><rect x="' + x + '" y="' + y + '" width="' + a + '" height="' + h +
+      '" fill="url(#vidrio)"/><path d="M' + (x + a / 2) + " " + y + "v" + h + "M" + x + " " + (y + h / 2) + "h" + a + '" stroke="#f4f4f4" stroke-width="3"/><path d="M' + (x + 6) + " " + (y + h - 6) + " L" + (x + a * 0.45) + " " + (y + 6) + " L" + (x + a * 0.6) + " " + (y + 6) + " L" + (x + 18) + " " + (y + h - 6) + 'z" fill="#fff" opacity=".13"/>';
+  }
+  function medidor(x, id, u) {
+    var c = x + 30;
+    return '<rect x="' + x + '" y="366" width="60" height="88" rx="10" fill="url(#amar)" stroke="#2a2a2a" stroke-width="2.5" filter="url(#sombra)"/>' +
+      '<rect x="' + (x + 6) + '" y="374" width="48" height="26" rx="3" fill="#b9cf9c" stroke="#333"/><rect x="' + (x + 6) + '" y="374" width="48" height="10" rx="3" fill="#fff" opacity=".2"/>' +
+      '<text x="' + (x + 9) + '" y="396" class="un">' + u + '</text><text id="' + id + '" x="' + (x + 52) + '" y="395" text-anchor="end" class="lcd">0.0</text>' +
+      '<circle cx="' + c + '" cy="422" r="13" fill="#222" stroke="#666" stroke-width="2"/><path d="M' + c + " 422 L" + (c + 6) + ' 413" stroke="#fff" stroke-width="2" stroke-linecap="round"/>' +
+      '<circle cx="' + (x + 14) + '" cy="446" r="4" fill="#d32f2f"/><circle cx="' + (x + 46) + '" cy="446" r="4" fill="#111"/>';
+  }
+  function cable(cls) { return PS.map(function (d) { return '<path class="' + cls + '" d="' + d + '"/>'; }).join(""); }
+
+  function html() {
+    var s = '<svg id="svgCasa" viewBox="0 0 900 560" role="img" aria-label="Casa en corte con el circuito de la Ley de Ohm"><defs>' +
+      '<linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#051c4a"/><stop offset=".55" stop-color="#2a6fc4"/><stop offset="1" stop-color="#9bd6f8"/></linearGradient>' +
+      '<linearGradient id="pasto" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f8a3a"/><stop offset="1" stop-color="#1b4d20"/></linearGradient>' +
+      '<linearGradient id="techo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#46536f"/><stop offset="1" stop-color="#1c2433"/></linearGradient>' +
+      '<linearGradient id="madera" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a5723f"/><stop offset="1" stop-color="#6b4423"/></linearGradient>' +
+      '<linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f9fb"/><stop offset="1" stop-color="#a9b4c0"/></linearGradient>' +
+      '<linearGradient id="amar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset="1" stop-color="#d99a00"/></linearGradient>' +
+      '<linearGradient id="vidrio" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a6fb0"/><stop offset="1" stop-color="#0d2a55"/></linearGradient>' +
+      '<linearGradient id="somb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient>' +
+      '<linearGradient id="cono" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8" stop-opacity=".55"/><stop offset="1" stop-color="#fff0a8" stop-opacity="0"/></linearGradient>' +
+      '<radialGradient id="luz"><stop offset="0" stop-color="#fff3b0" stop-opacity=".95"/><stop offset="1" stop-color="#ffb300" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="calor"><stop offset="0" stop-color="#ff7a18" stop-opacity=".9"/><stop offset="1" stop-color="#ff3b00" stop-opacity="0"/></radialGradient>' +
+      '<pattern id="tejas" width="26" height="13" patternUnits="userSpaceOnUse"><path d="M0 12H26M13 0V12" stroke="#000" stroke-opacity=".3" fill="none"/></pattern>' +
+      '<filter id="sombra" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".4"/></filter>' +
+      '<filter id="bri" filterUnits="userSpaceOnUse" x="0" y="0" width="900" height="560"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+    // cielo, luna, estrellas, nubes y pasto
+    s += '<rect width="900" height="560" fill="url(#cielo)"/><circle cx="810" cy="72" r="46" fill="#fff7d6" opacity=".18"/><circle cx="810" cy="72" r="22" fill="#fff7d6"/>';
+    [[60, 40], [150, 92], [260, 30], [380, 70], [520, 26], [640, 62], [730, 112], [860, 20], [100, 140]].forEach(function (p, i) {
+      s += '<circle class="est2" style="animation-delay:' + (i * 0.4) + 's" cx="' + p[0] + '" cy="' + p[1] + '" r="1.5" fill="#fff"/>';
+    });
+    s += '<g class="nube" style="animation-duration:80s"><ellipse cx="0" cy="95" rx="60" ry="16" fill="#fff" opacity=".35"/><ellipse cx="38" cy="86" rx="38" ry="14" fill="#fff" opacity=".35"/></g>' +
+      '<g class="nube" style="animation-duration:120s;animation-delay:-50s"><ellipse cx="0" cy="140" rx="70" ry="14" fill="#fff" opacity=".25"/><ellipse cx="-30" cy="132" rx="34" ry="12" fill="#fff" opacity=".25"/></g>';
+    s += '<rect y="518" width="900" height="42" fill="url(#pasto)"/><circle cx="22" cy="470" r="44" fill="#256b2a"/><circle cx="880" cy="475" r="40" fill="#256b2a"/><rect x="16" y="500" width="10" height="22" fill="#4a2f1b"/><rect x="874" y="500" width="10" height="22" fill="#4a2f1b"/>';
+    // techo y chimenea
+    s += '<rect x="680" y="92" width="36" height="70" fill="#3a2f2a"/><polygon points="30,172 450,45 870,172" fill="url(#techo)"/><polygon points="30,172 450,45 870,172" fill="url(#tejas)"/><rect x="60" y="170" width="780" height="8" fill="#141a26"/>';
+    // habitaciones
+    s += '<rect x="60" y="178" width="270" height="160" fill="#f3dcc0"/><rect x="330" y="178" width="230" height="160" fill="#dfeef2"/><rect x="560" y="178" width="280" height="160" fill="#f4e9d8"/>' +
+      '<rect x="60" y="344" width="240" height="176" fill="#e6e0d6"/><rect x="300" y="344" width="300" height="176" fill="#efe6d2"/><rect x="600" y="344" width="240" height="176" fill="#f2ece0"/>' +
+      '<rect x="60" y="178" width="780" height="342" fill="url(#somb)"/>' +
+      '<rect x="60" y="328" width="780" height="8" fill="#b08a5a"/><rect x="60" y="510" width="780" height="10" fill="#9a7b52"/>' +
+      '<rect x="60" y="336" width="780" height="8" fill="#8a7a62"/><g stroke="#8a7a62" stroke-width="4"><path d="M330 178V336M560 178V336M300 344V520M600 344V520M60 178V520M840 178V520"/></g>';
+    // ventanas y cuadro
+    s += ventana(225, 200, 74, 54) + ventana(362, 200, 74, 50) + ventana(640, 372, 62, 46) + '<rect x="100" y="205" width="58" height="42" fill="#7a4a2a"/><rect x="104" y="209" width="50" height="34" fill="#6fa8c8"/><path d="M104 232l16-12 14 8 12-10 8 8v8h-50z" fill="#3f7a4a"/>';
+    // dormitorio, baño y sala
+    s += '<rect x="90" y="290" width="180" height="46" rx="6" fill="#b9c3d6" filter="url(#sombra)"/><rect x="90" y="262" width="14" height="74" rx="3" fill="#6d4c41"/><rect x="108" y="276" width="46" height="16" rx="7" fill="#fff"/><rect x="170" y="292" width="100" height="22" fill="#8fa0bf"/>' +
+      '<rect x="470" y="205" width="74" height="131" fill="rgba(160,220,255,.3)" stroke="#7fd0ff" stroke-width="2"/><circle cx="510" cy="222" r="6" fill="#aab"/><rect x="350" y="300" width="34" height="36" rx="7" fill="#fff" filter="url(#sombra)"/><rect x="354" y="288" width="26" height="14" rx="3" fill="#f0f0f0"/>' +
+      '<rect x="640" y="238" width="140" height="68" rx="3" fill="#14181f" stroke="#000" filter="url(#sombra)"/><path d="M646 244h54l-30 56h-24z" fill="#fff" opacity=".07"/><rect x="600" y="304" width="150" height="32" rx="8" fill="#8e9bb0" filter="url(#sombra)"/><circle cx="590" cy="310" r="18" fill="#3f8f4a"/><circle cx="582" cy="304" r="10" fill="#4fa85a"/><rect x="586" y="316" width="8" height="20" fill="#6d4c41"/>';
+    // planta baja
+    s += '<rect x="215" y="446" width="70" height="72" rx="6" fill="url(#metal)" stroke="#aab" stroke-width="2" filter="url(#sombra)"/><circle cx="250" cy="486" r="22" fill="#7fa6c9" stroke="#678" stroke-width="3"/><circle cx="243" cy="479" r="7" fill="#fff" opacity=".35"/>' +
+      '<rect x="720" y="360" width="76" height="158" rx="5" fill="url(#metal)" filter="url(#sombra)"/><path d="M720 430h76" stroke="#8a95a3" stroke-width="2"/><rect x="726" y="388" width="4" height="30" rx="2" fill="#556"/><rect x="726" y="440" width="4" height="40" rx="2" fill="#556"/>' +
+      '<rect x="620" y="470" width="86" height="48" rx="4" fill="#7a828c" filter="url(#sombra)"/><rect x="630" y="488" width="66" height="26" rx="3" fill="#1d2229"/><circle cx="640" cy="478" r="4" fill="#333"/><circle cx="660" cy="478" r="4" fill="#333"/><circle cx="680" cy="478" r="4" fill="#333"/>' +
+      '<rect x="320" y="456" width="270" height="12" rx="2" fill="url(#madera)" filter="url(#sombra)"/><rect x="335" y="468" width="10" height="50" fill="#6b4423"/><rect x="565" y="468" width="10" height="50" fill="#6b4423"/><rect x="428" y="455" width="64" height="5" rx="1" fill="#f2efe6" stroke="#999" stroke-width=".6"/>';
+    // lámparas, conos y resplandor
+    s += '<polygon id="cn1" points="175,232 205,232 262,334 118,334" fill="url(#cono)" opacity="0"/><polygon id="cn2" points="684,236 716,236 790,334 610,334" fill="url(#cono)" opacity="0"/>' +
+      '<circle id="lz1" cx="190" cy="228" r="72" fill="url(#luz)" opacity="0"/><circle id="lz2" cx="700" cy="228" r="82" fill="url(#luz)" opacity="0"/>' +
+      '<path d="M190 178V212M700 178V212" stroke="#333" stroke-width="3"/><path d="M174 224a16 14 0 0 1 32 0z" fill="#e8c24a" stroke="#a07c10"/><path d="M682 226a18 15 0 0 1 36 0z" fill="#e8c24a" stroke="#a07c10"/>' +
+      '<circle id="bl1" cx="190" cy="228" r="8" fill="#fff3b0" opacity=".4"/><circle id="bl2" cx="700" cy="231" r="9" fill="#fff3b0" opacity=".4"/>';
+    // fuente DC
+    s += '<rect x="80" y="395" width="110" height="72" rx="7" fill="url(#metal)" stroke="#556" stroke-width="2" filter="url(#sombra)"/><rect x="90" y="403" width="62" height="28" rx="3" fill="#1a0000" stroke="#000"/>' +
+      '<text id="fuV" x="148" y="424" text-anchor="end" class="rojo">0.0 V</text><circle id="led" cx="166" cy="410" r="3.5" fill="#22c55e" opacity=".25"/>' +
+      '<circle cx="104" cy="450" r="9" fill="#2b3340"/><path id="knob" d="M104 450L104 443" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="132" cy="450" r="9" fill="#2b3340"/><path d="M132 450L137 445" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<circle cx="190" cy="418" r="7" fill="#e53935" stroke="#7f1d1d" stroke-width="2"/><circle cx="190" cy="442" r="7" fill="#111" stroke="#000" stroke-width="2"/>';
+    s += "<g>" + cable("w") + cable("g") + cable("fl") + "</g>";
+    // interruptor
+    s += '<rect x="296" y="276" width="48" height="28" rx="6" fill="#fff" stroke="#889" filter="url(#sombra)"/><circle cx="300" cy="290" r="4" fill="#333"/><circle cx="340" cy="290" r="4" fill="#333"/>' +
+      '<line id="lev" x1="300" y1="290" x2="338" y2="290" stroke="#333" stroke-width="4" stroke-linecap="round"/><circle id="sp" cx="320" cy="290" r="14" fill="#fff3b0"/>';
+    // instrumentos, resistencia y puntas
+    s += medidor(370, "amV", "mA") + medidor(520, "vmV", "V");
+    s += '<circle id="ht" cx="460" cy="452" r="30" fill="url(#calor)" opacity="0"/><rect x="445" y="447" width="30" height="10" rx="5" fill="#e8d3a2" stroke="#8a6d2f"/>' +
+      '<rect id="b1" x="451" y="447" width="3.2" height="10" fill="#f57c00"/><rect id="b2" x="457" y="447" width="3.2" height="10" fill="#f57c00"/><rect id="b3" x="463" y="447" width="3.2" height="10" fill="#7b3f00"/><rect x="469" y="447" width="2.4" height="10" fill="#d4af37"/>';
+    s += '<path d="M535,452 C535,484 480,484 476,458" fill="none" stroke="#d32f2f" stroke-width="2.5" stroke-linecap="round"/><path d="M565,452 C565,492 440,492 444,458" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>';
+    s += lb(135, 372, "Fuente de Tensión DC", 135, 395) + lb(300, 252, "Interruptor", 318, 276) + lb(455, 262, "Conductor", 402, 290) + lb(790, 195, "Receptor (Lámpara)", 718, 226) +
+      lb(550, 345, "Voltímetro (Paralelo)", 550, 366) + lb(390, 342, "Amperímetro (Serie)", 400, 366) + lb(460, 537, "Resistencia", 460, 460);
+    return s + "</svg>";
+  }
+
+  function tick() {
+    var mov = false;
+    ["fu", "vm", "am"].forEach(function (k) {
+      var d = T[k] - cur[k];
+      if (Math.abs(d) > 0.004) { cur[k] += d * 0.15; mov = true; } else { cur[k] = T[k]; }
+    });
+    g("fuV").textContent = cur.fu.toFixed(1) + " V";
+    g("vmV").textContent = cur.vm.toFixed(2);
+    g("amV").textContent = cur.am.toFixed(1);
+    run = mov;
+    if (mov) { requestAnimationFrame(tick); }
+  }
+  function bandas(r) {
+    var t = String(r), d1 = +t[0], d2 = +t[1] || 0, m = t.length - 2;
+    g("b1").setAttribute("fill", COL[d1]); g("b2").setAttribute("fill", COL[d2]); g("b3").setAttribute("fill", COL[m]);
+  }
+
+  w.Casa = {
+    montar: function (el) { el.innerHTML = html(); },
+    actualizar: function (s) {
+      var activo = s.on && s.U > 0;
+      T.fu = s.U; T.vm = s.Um; T.am = s.I * 1000;
+      if (!run) { run = true; requestAnimationFrame(tick); }
+      var op = activo ? 0.15 + 0.85 * Math.min(1, Math.sqrt(s.P)) : 0;
+      g("lz1").setAttribute("opacity", (op * 0.8).toFixed(2));
+      g("lz2").setAttribute("opacity", op.toFixed(2));
+      g("cn1").setAttribute("opacity", (op * 0.7).toFixed(2));
+      g("cn2").setAttribute("opacity", (op * 0.8).toFixed(2));
+      g("bl1").setAttribute("opacity", (0.4 + 0.6 * op).toFixed(2));
+      g("bl2").setAttribute("opacity", (0.4 + 0.6 * op).toFixed(2));
+      g("ht").setAttribute("opacity", activo ? Math.min(1, s.P / 0.7).toFixed(2) : 0);
+      g("led").setAttribute("opacity", s.on ? 1 : 0.25);
+      g("knob").style.transformOrigin = "104px 450px";
+      g("knob").style.transition = "transform .5s ease";
+      g("knob").style.transform = "rotate(" + (-135 + (s.U / 12) * 270) + "deg)";
+      if (s.R && s.R !== lastR) { lastR = s.R; bandas(s.R); }
+      if (last !== null && s.on && !last) {
+        var sp = g("sp"); sp.classList.remove("go"); void sp.getBoundingClientRect(); sp.classList.add("go");
+      }
+      last = s.on;
+      var sv = g("svgCasa");
+      sv.setAttribute("class", (s.on ? "sw " : "") + (activo ? "on" : ""));
+      sv.style.setProperty("--dur", Math.max(0.35, 2.4 - Math.log10(1 + s.I * 1000) * 0.8).toFixed(2) + "s");
+    }
+  };
+})(window);
+
+</script>
+<script>
+/* Lógica de la interfaz: estado, selectores, pestañas, prácticas y resultados. */
+(function () {
+  "use strict";
+
+  var $ = function (s) { return document.querySelector(s); };
+  var E = { on: false, U: 12, R: 330, reg: [] };
+  var tAviso = null;
+
+  function f(n, d) { return n.toFixed(d); }
+  function anim(el, to, d) {
+    var from = parseFloat(el.textContent) || 0, t0 = performance.now();
+    cancelAnimationFrame(el._r);
+    (function paso(t) {
+      var k = Math.min(1, (t - t0) / 350), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = (from + (to - from) * e).toFixed(d);
+      if (k < 1) { el._r = requestAnimationFrame(paso); }
+    })(t0);
+  }
+
+  function aviso(msg) {
+    var a = $("#aviso");
+    $("#avx").textContent = msg;
+    a.classList.remove("flash");
+    void a.offsetWidth;
+    a.classList.add("flash");
+    clearTimeout(tAviso);
+    tAviso = setTimeout(function () { $("#avx").textContent = ""; }, 5000);
+  }
+
+  /* ---------- Simulador principal ---------- */
+  function actualizar() {
+    var I = E.on ? Ohm.iMed(E.U, E.R) : 0;
+    var Um = E.on ? Ohm.uMed(E.U, E.R) : 0;
+    var P = E.on ? Ohm.pot(E.U, E.R) : 0;
+    anim($("#oU"), E.on ? E.U : 0, 1);
+    anim($("#oI"), I, 3);
+    $("#oR").textContent = E.R;
+    anim($("#oP"), P, 3);
+    var es = $("#estado");
+    es.textContent = E.on ? "CIRCUITO CERRADO" : "CIRCUITO ABIERTO";
+    es.className = "est " + (E.on ? "ok" : "no");
+    $("#bOn").disabled = E.on;
+    $("#bOff").disabled = !E.on;
+    Casa.actualizar({ R: E.R, on: E.on, U: E.on ? E.U : 0, Um: Um, I: I, P: P });
+  }
+
+  Ohm.UV.forEach(function (u) { $("#sU").add(new Option(u + " V", u)); });
+  Ohm.RV.forEach(function (r) { $("#sR").add(new Option(r + " Ω", r)); });
+  [2, 4, 6, 8, 10, 12].forEach(function (u) { $("#uA2").add(new Option(u + " V", u)); });
+  $("#sU").value = E.U; $("#sR").value = E.R; $("#uA2").value = 6;
+
+  $("#sU").addEventListener("change", function () { E.U = +this.value; actualizar(); });
+  $("#sR").addEventListener("change", function () {
+    if (E.on) {
+      this.value = E.R;
+      aviso("Apague la fuente antes de cambiar la resistencia (cambio de conexiones).");
+      return;
+    }
+    E.R = +this.value;
+    actualizar();
+  });
+  $("#bOn").addEventListener("click", function () { E.on = true; actualizar(); });
+  $("#bOff").addEventListener("click", function () { E.on = false; actualizar(); });
+
+  /* ---------- Pestañas ---------- */
+  var tabs = document.querySelectorAll("#tabs button");
+  Array.prototype.forEach.call(tabs, function (b) {
+    b.addEventListener("click", function () {
+      Array.prototype.forEach.call(tabs, function (x) { x.classList.toggle("on", x === b); });
+      Array.prototype.forEach.call(document.querySelectorAll(".pn"), function (p) {
+        p.classList.toggle("on", p.id === "t-" + b.dataset.t);
+      });
+      if (b.dataset.t === "prac") { practicas(); }
+      if (b.dataset.t === "res") { resultados(); }
+    });
+  });
+
+  /* ---------- Laboratorio: registro de mediciones ---------- */
+  function dibujarLab() {
+    var t = $("#tLab");
+    if (!E.reg.length) {
+      t.innerHTML = '<tr><td style="padding:10px">Aún no hay mediciones registradas.</td></tr>';
+      return;
+    }
+    t.innerHTML = "<tr><th>N.°</th><th>R (Ω)</th><th>U (V)</th><th>U med. (V)</th><th>I calc. (mA)</th><th>I med. (mA)</th><th>Error (%)</th></tr>" +
+      E.reg.map(function (x, i) {
+        return "<tr><td>" + (i + 1) + "</td><td>" + x.r + "</td><td>" + x.u + "</td><td>" + f(x.um, 2) + "</td><td>" +
+          f(x.ic, 1) + "</td><td>" + f(x.im, 1) + "</td><td>" + f(x.e, 1) + "</td></tr>";
+      }).join("");
+  }
+  $("#bReg").addEventListener("click", function () {
+    if (!E.on || E.U === 0) {
+      aviso("Encienda la fuente y ajuste una tensión mayor que 0 V para registrar.");
+      return;
+    }
+    var ic = Ohm.iCalc(E.U, E.R) * 1000, im = Ohm.iMed(E.U, E.R) * 1000;
+    E.reg.push({ u: E.U, r: E.R, um: Ohm.uMed(E.U, E.R), ic: ic, im: im, e: Ohm.error(ic, im) });
+    if (E.reg.length > 40) { E.reg.shift(); }
+    dibujarLab();
+  });
+  $("#bClr").addEventListener("click", function () { E.reg = []; dibujarLab(); });
+  $("#bCsv").addEventListener("click", function () {
+    if (!E.reg.length) { aviso("No hay mediciones para exportar."); return; }
+    var csv = "N;R (ohm);U (V);U med (V);I calc (mA);I med (mA);Error (%)\n" + E.reg.map(function (x, i) {
+      return [i + 1, x.r, x.u, f(x.um, 2), f(x.ic, 1), f(x.im, 1), f(x.e, 1)].join(";");
+    }).join("\n");
+    var blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "mediciones_ley_de_ohm.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 500);
+  });
+  dibujarLab();
+
+  /* ---------- Prácticas A.1 y A.2 ---------- */
+  function practicas() {
+    var d1 = Ohm.tabla1(+$("#rA1").value), d2 = Ohm.tabla2(+$("#uA2").value);
+    $("#tA1").innerHTML = "<tr><th>U (V)</th><th>I calc. (mA)</th><th>I med. (mA)</th><th>Error (%)</th></tr>" +
+      d1.map(function (x) { return "<tr><td>" + x.u + "</td><td>" + f(x.ic, 1) + "</td><td>" + f(x.im, 1) + "</td><td>" + f(x.e, 1) + "</td></tr>"; }).join("");
+    $("#tA2").innerHTML = "<tr><th>R (Ω)</th><th>I calc. (mA)</th><th>I med. (mA)</th><th>Error (%)</th></tr>" +
+      d2.map(function (x) { return "<tr><td>" + x.r + "</td><td>" + f(x.ic, 1) + "</td><td>" + f(x.im, 1) + "</td><td>" + f(x.e, 1) + "</td></tr>"; }).join("");
+    Graf.dibujar($("#gA1"), d1.map(function (x) { return [x.u, x.im]; }), { xmax: 12, xl: "U (V)", yl: "I (mA)" });
+    Graf.dibujar($("#gA2"), d2.slice().reverse().map(function (x) { return [x.r, x.im]; }), { xmax: 1000, xl: "R (Ω)", yl: "I (mA)" });
+  }
+  $("#rA1").addEventListener("change", practicas);
+  $("#uA2").addEventListener("change", practicas);
+  window.addEventListener("resize", function () {
+    if ($("#t-prac").classList.contains("on")) { practicas(); }
+  });
+
+  /* ---------- Resultados ---------- */
+  function resultados() {
+    var R = +$("#rA1").value, U = +$("#uA2").value;
+    var d1 = Ohm.tabla1(R), d2 = Ohm.tabla2(U);
+    var aj = Ohm.ajuste(d1.map(function (x) { return [x.u, x.im]; }));
+    var rEst = 1000 / aj.k;
+    var prod = d2.reduce(function (s, x) { return s + (x.im * x.r) / 1000; }, 0) / d2.length;
+    var todos = d1.concat(d2), eMax = 0, eMed = 0;
+    todos.forEach(function (x) { eMax = Math.max(eMax, x.e); eMed += x.e / todos.length; });
+    var okE = eMax <= 5;
+    var lab = "";
+    if (E.reg.length) {
+      var em = E.reg.reduce(function (s, x) { return s + x.e; }, 0) / E.reg.length;
+      lab = "<li>Mediciones registradas en el laboratorio: <b>" + E.reg.length + "</b> (error medio " + f(em, 2) + " %).</li>";
+    }
+    $("#resBox").innerHTML =
+      '<div class="rs"><b>Observaciones</b><ul>' +
+      "<li>Con R = " + R + " Ω constante, la corriente aumenta linealmente con la tensión (R² = " + f(aj.r2, 4) + "; R estimada = " + f(rEst, 0) + " Ω).</li>" +
+      "<li>Con U = " + U + " V constante, la corriente disminuye al aumentar la resistencia (producto I·R medio = " + f(prod, 2) + " V).</li>" +
+      "<li>Error relativo máximo: " + f(eMax, 2) + " % · medio: " + f(eMed, 2) + " % (límite permitido: 5 %) " +
+      '<span class="tag ' + (okE ? "ok" : "no") + '">' + (okE ? "Aprobado" : "Fuera de rango") + "</span></li>" + lab + "</ul></div>" +
+      '<div class="rs"><b>Conclusiones</b><ul>' +
+      "<li>Se confirma la Ley de Ohm: la corriente es directamente proporcional a la tensión.</li>" +
+      "<li>La corriente es inversamente proporcional a la resistencia del circuito.</li></ul>" +
+      '<p style="margin:10px 0 0"><span class="fx">I = U / R</span></p></div>';
+  }
+
+  Casa.montar($("#casa"));
+  actualizar();
+})();
+
+</script>
+</body>
+</html>
